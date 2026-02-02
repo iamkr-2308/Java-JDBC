@@ -1,0 +1,195 @@
+-------------------------------------------
+JDBC (Java Database Connectivity) Notes
+-------------------------------------------
+
+JDBC is used to connect Java application with a database.
+Steps of JDBC:
+1️⃣ Register Driver  (Class.forName)
+2️⃣ Create Connection (DriverManager.getConnection)
+3️⃣ Create Statement (Statement / PreparedStatement)
+4️⃣ Execute Query (executeQuery / executeUpdate)
+5️⃣ Close Connection (optional here)
+
+executeQuery() → Used only for SELECT (retrieval)
+executeUpdate() → Used for INSERT, UPDATE, DELETE
+-------------------------------------------
+
+// Basic JDBC Retrieve Program
+// Used to retrieve all data from students table using ResultSet.
+
+import java.sql.*;
+
+public class BasicJDBC {
+
+    private static final String url = "jdbc:mysql://localhost:3306/ide";
+    private static final String username = "root";
+    private static final String password  = "sqliamkr_2308";
+
+    public static void main(String []args) throws Exception {
+
+        // Step 1: Register the Driver
+        try {
+            Class.forName("com.mysql.cj.jdbc.driver");
+        } catch (ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            // Step 2: Create Connection Object
+            Connection con = DriverManager.getConnection(url, username, password);
+
+            // Step 3: Create Statement object
+            Statement stmt = con.createStatement();
+
+            // Step 4: Execute Query (Retrieve all rows)
+            String query = "SELECT * FROM students";
+            ResultSet st = stmt.executeQuery(query);
+
+            // Extracting values row by row
+            while (st.next())
+            {
+                int id = st.getInt("id");
+                String name = st.getString("name");
+                int age = st.getInt("age");
+                double marks = st.getDouble("marks");
+
+                System.out.println("ID:" + id);
+                System.out.println("NAME:" + name);
+                System.out.println("AGE:" + age);
+                System.out.println("MARKS:" + marks);
+            }
+
+        }catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+
+
+// Basic JDBC Insert Program
+// Used for inserting record into students table.
+
+import java.sql.*;
+
+public class JDBCInsert {
+
+    private static final String url = "jdbc:mysql://localhost:3306/IDE";
+    private static final String username = "root";
+    private static final String password = "sqliamkr_2308";
+
+    public static void main(String []args) throws Exception {
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.driver");
+        }catch(ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            // Step 2: Establish Connection
+            Connection con = DriverManager.getConnection(url, username, password);
+
+            // Step 3: Create Statement
+            Statement stmt = con.createStatement();
+
+            // Step 4: INSERT Query
+            String query = String.format("INSERT INTO students(name, age, marks) VALUES('%s', %o, %f)", "Dhruv", 18, 93.5);
+
+            int rowAffected = stmt.executeUpdate(query);
+
+            if (rowAffected > 0) {
+                System.out.println("Data Inserted Successfully !!!! ");
+            }
+            else {
+                System.out.println("Data not Inserted !!! ");
+            }
+
+        }catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+
+
+// Basic JDBC Update Program
+// Used to update marks of a student based on ID.
+
+import java.sql.*;
+
+public class JDBCUpdate {
+
+    private static final String url = "jdbc:mysql://localhost:3306/IDE";
+    private static final String username = "root";
+    private static final String password = "sqliamkr_2308";
+
+    public static void main(String[] args) throws Exception {
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.driver");
+        }catch(ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            Connection con = DriverManager.getConnection(url, username, password);
+            Statement stmt = con.createStatement();
+
+            // Updating marks where id = 3
+            String query = String.format("UPDATE students SET marks = %f WHERE id = %d", 94.0, 3);
+
+            int rowAffected = stmt.executeUpdate(query);
+
+            if (rowAffected > 0) {
+                System.out.println("Data Updated Successfully !!!! ");
+            }
+            else {
+                System.out.println("Data not Updated !!! ");
+            }
+
+        }catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+
+
+// Basic JDBC Delete Program
+// Used to delete multiple student records based on ID.
+
+import java.sql.*;
+
+public class JDBCDelete {
+
+    private static final String url = "jdbc:mysql://localhost:3306/IDE";
+    private static final String username = "root";
+    private static final String password = "sqliamkr_2308";
+
+    public static void main(String []args) throws Exception {
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.driver");
+        }catch(ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            Connection con = DriverManager.getConnection(url, username, password);
+            Statement stmt = con.createStatement();
+
+            // Delete multiple IDs
+            String query = String.format("DELETE FROM students WHERE id in (%s, %s)", 5, 6);
+
+            int rowAffected = stmt.executeUpdate(query);
+
+            if (rowAffected > 0) {
+                System.out.println("Data Deleted Successfully !!!! ");
+            }
+            else {
+                System.out.println("Data not Deleted !!! ");
+            }
+
+        }catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
